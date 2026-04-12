@@ -12,9 +12,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy source
 COPY . .
 
-# Define a build-time argument
-ARG OPENAI_API_KEY
-ENV OPENAI_API_KEY=${OPENAI_API_KEY}
-
 # Default command
 CMD ["python", "inference.py"]
