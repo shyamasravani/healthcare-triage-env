@@ -1,13 +1,9 @@
-import asyncio
 import os
 import textwrap
 from typing import List, Optional
-
 from openai import OpenAI
 from my_env_v4 import MyEnvV4Action, MyEnvV4Env
 
-# Environment variables (must be set in your Space)
-IMAGE_NAME = os.getenv("LOCAL_IMAGE_NAME")  # docker image name if using from_docker_image()
 API_KEY = os.getenv("HF_TOKEN") or os.getenv("API_KEY")
 API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
 MODEL_NAME = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")
@@ -19,7 +15,6 @@ TEMPERATURE = 0.7
 MAX_TOKENS = 150
 SUCCESS_SCORE_THRESHOLD = 0.1
 
-# Reward scaling
 _MAX_REWARD_PER_STEP = MAX_TOKENS * 0.1
 MAX_TOTAL_REWARD = MAX_STEPS * _MAX_REWARD_PER_STEP
 
@@ -78,10 +73,8 @@ def get_model_message(client: OpenAI, step: int, last_echoed: str, last_reward: 
         return "hello"
 
 
-async def main() -> None:
+def main() -> None:
     client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
-
-    # Instantiate environment directly
     env = MyEnvV4Env()
 
     history: List[str] = []
@@ -94,7 +87,7 @@ async def main() -> None:
 
     try:
         result = env.reset()
-        last_echoed = result["observation"]["echoed_message"]
+        last_echoed = result.get("echoed_message", "")
         last_reward = 0.0
 
         for step in range(1, MAX_STEPS + 1):
@@ -102,9 +95,7 @@ async def main() -> None:
                 break
 
             message = get_model_message(client, step, last_echoed, last_reward, history)
-
             result = env.step(MyEnvV4Action(message=message))
-            obs = result["observation"]
 
             reward = result.get("reward", 0.0)
             done = result.get("done", False)
@@ -112,7 +103,7 @@ async def main() -> None:
 
             rewards.append(reward)
             steps_taken = step
-            last_echoed = obs["echoed_message"]
+            last_echoed = result.get("echoed_message", "")
             last_reward = reward
 
             log_step(step=step, action=message, reward=reward, done=done, error=error)
@@ -130,4 +121,4 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
