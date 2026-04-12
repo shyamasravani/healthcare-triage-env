@@ -95,7 +95,7 @@ def main() -> None:
                 break
 
             message = get_model_message(client, step, last_echoed, last_reward, history)
-            result = env.step(MyEnvV4Action(message=message))
+            result = env.step(MyEnvV4Action(decision=message))
 
             reward = result.get("reward", 0.0)
             done = result.get("done", False)
