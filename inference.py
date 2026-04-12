@@ -9,7 +9,7 @@ from my_env_v4 import MyEnvV4Action, MyEnvV4Env
 IMAGE_NAME = os.getenv("IMAGE_NAME")
 API_KEY = os.getenv("HF_TOKEN") or os.getenv("OPENAI_API_KEY")
 API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
-MODEL_NAME = os.getenv("MODEL_NAME", "meta-llama\Llama‑3‑8b‑chat‑hf")
+MODEL_NAME = os.getenv("MODEL_NAME", "meta-llama/Llama‑3‑8b‑chat‑hf")
 TASK_NAME = os.getenv("MY_ENV_V4_TASK", "triage")
 BENCHMARK = os.getenv("MY_ENV_V4_BENCHMARK", "my_env_v4")
 
