@@ -80,6 +80,8 @@ def get_model_message(client: OpenAI, step: int, last_echoed: str, last_reward: 
 
 async def main() -> None:
     client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
+
+    # Instantiate environment directly
     env = MyEnvV4Env()
 
     history: List[str] = []
@@ -91,25 +93,26 @@ async def main() -> None:
     log_start(task=TASK_NAME, env=BENCHMARK, model=MODEL_NAME)
 
     try:
-        result = await env.reset()
-        last_echoed = result.observation.echoed_message
+        result = env.reset()
+        last_echoed = result["observation"]["echoed_message"]
         last_reward = 0.0
 
         for step in range(1, MAX_STEPS + 1):
-            if result.done:
+            if result.get("done"):
                 break
 
             message = get_model_message(client, step, last_echoed, last_reward, history)
-            result = await env.step(MyEnvV4Action(message=message))
-            obs = result.observation
 
-            reward = result.reward or 0.0
-            done = result.done
+            result = env.step(MyEnvV4Action(message=message))
+            obs = result["observation"]
+
+            reward = result.get("reward", 0.0)
+            done = result.get("done", False)
             error = None
 
             rewards.append(reward)
             steps_taken = step
-            last_echoed = obs.echoed_message
+            last_echoed = obs["echoed_message"]
             last_reward = reward
 
             log_step(step=step, action=message, reward=reward, done=done, error=error)
@@ -123,10 +126,6 @@ async def main() -> None:
         success = score >= SUCCESS_SCORE_THRESHOLD
 
     finally:
-        try:
-            await env.close()
-        except Exception as e:
-            print(f"[DEBUG] env.close() error: {e}", flush=True)
         log_end(success=success, steps=steps_taken, score=score, rewards=rewards)
 
 
