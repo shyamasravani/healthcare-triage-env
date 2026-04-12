@@ -12,7 +12,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy source
 COPY . .
 
-<<<<<<< HEAD
 # Define a build-time argument (no secret in repo)
 ARG OPENAI_API_KEY
 ENV OPENAI_API_KEY=${OPENAI_API_KEY}
