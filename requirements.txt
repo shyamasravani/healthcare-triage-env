@@ -1,0 +1,10 @@
+openenv
+fastapi
+pydantic
+uvicorn
+requests
+openai
+openenv-core
+asyncio
+textwrap3
+typing

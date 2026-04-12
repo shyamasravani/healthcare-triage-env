@@ -1,0 +1,12 @@
+name: healthcare-triage-env
+description: >
+  A healthcare triage environment simulating patient screening decisions
+  for rural clinics. Agents must decide whether to mark patients as Healthy,
+  Monitor, Refer, or RequestTest based on limited data.
+tasks:
+  - id: easy
+    description: Clear cases with obvious triage outcomes
+  - id: medium
+    description: Borderline patients with mixed signals
+  - id: hard
+    description: Larger batch with resource constraints
